@@ -1,14 +1,15 @@
-import React, { useReducer } from "react";
+import React from "react";
 
-import { featureReducer, initialState } from "./reducers/featureReducer";
+import { connect } from "react-redux";
 
 import Header from "./components/Header";
 import AddedFeatures from "./components/AddedFeatures";
 import AdditionalFeatures from "./components/AdditionalFeatures";
 import Total from "./components/Total";
 
-const App = () => {
-    const [featureState, dispatch] = useReducer(featureReducer, initialState);
+import { removeFeature, buyItem } from "./action";
+
+const App = (props) => {
     // const state = {
     //   additionalPrice: 0,
     //   car: {
@@ -26,37 +27,36 @@ const App = () => {
     //   ]
     // };
 
-    const removeFeature = (item) => {
-        // dispatch an action here to remove an item
-        dispatch({ type: "REMOVE_FEATURE", payload: item });
-    };
-
-    const buyItem = (item) => {
-        // dipsatch an action here to add an item
-        dispatch({ type: "ADD_FEATURE", payload: item });
-    };
-
+    console.log("car", props.car);
     return (
         <div className="boxes">
             <div className="box">
-                <Header car={featureState.car} />
+                <Header car={props.car} />
                 <AddedFeatures
-                    car={featureState.car}
-                    removeFeature={removeFeature}
+                    car={props.car}
+                    removeFeature={props.removeFeature}
                 />
             </div>
             <div className="box">
                 <AdditionalFeatures
-                    additionalFeatures={featureState.additionalFeatures}
-                    buyItem={buyItem}
+                    additionalFeatures={props.additionalFeatures}
+                    buyItem={props.buyItem}
                 />
                 <Total
-                    car={featureState.car}
-                    additionalPrice={featureState.additionalPrice}
+                    car={props.car}
+                    additionalPrice={props.additionalPrice}
                 />
             </div>
         </div>
     );
 };
 
-export default App;
+const mapStateToProps = (state) => {
+    return {
+        additionalPrice: state.additionalPrice,
+        car: state.car,
+        additionalFeatures: state.additionalFeatures,
+    };
+};
+
+export default connect(mapStateToProps, { removeFeature, buyItem })(App);

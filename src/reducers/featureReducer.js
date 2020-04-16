@@ -1,3 +1,6 @@
+import { REMOVE_FEATURE } from "../action";
+import { ADD_FEATURE } from "../action";
+
 export const initialState = {
     additionalPrice: 0,
     car: {
@@ -16,75 +19,41 @@ export const initialState = {
 };
 
 export const featureReducer = (state = initialState, action) => {
+    console.log("action", action);
+    console.log("previousstate", state);
     switch (action.type) {
-        case "ADD_FEATURE":
+        case ADD_FEATURE:
             return {
                 ...state,
                 additionalPrice: state.additionalPrice + action.payload.price,
-                features: state.car.features.push(action.payload),
+                car: {
+                    ...state.car,
+                    features: [...state.car.features, action.payload],
+                },
+                additionalFeatures: [
+                    ...state.additionalFeatures.filter(
+                        (feature) => feature.id !== action.payload.id
+                    ),
+                ],
             };
-        case "REMOVE_FEATURE":
+        case REMOVE_FEATURE:
             return {
                 ...state,
                 additionalPrice: state.additionalPrice - action.payload.price,
+                car: {
+                    ...state.car,
+                    features: [
+                        ...state.car.features.filter(
+                            (feature) => feature.id !== action.payload.id
+                        ),
+                    ],
+                },
+                additionalFeatures: [
+                    ...state.additionalFeatures,
+                    action.payload,
+                ],
             };
         default:
             return state;
     }
 };
-// case "TOGGLE_REMOVE_FEATURE":
-//     return {
-//         ...state,
-//         features: state.features.map((feature) => {
-//             if (feature.id === action.payload) {
-//                 return {
-//                     ...feature,
-//                     added: feature.added,
-//                 };
-//             }
-//             return feature;
-//         }),
-//     };
-// case "ADD_TO_ADDITONAL_FEATURES":
-//     return {
-//         ...state.additionalFeatures,
-//         additionalFeatures: state.features.filter((feature) => {
-//             return !feature.added;
-//         }),
-//     };
-// case "REMOVE_FROM_FEATURES":
-//     return {
-//         ...state,
-//         features: state.features.filter((features) => {
-//             return features.added;
-//         }),
-//     };
-// case "TOGGLE_ADD_FEATURE":
-//     return {
-//         ...state,
-//         additionalFeatures: state.additionalFeatures.map((item) => {
-//             if (item.id === action.payload) {
-//                 return {
-//                     ...item,
-//                     added: !item.added,
-//                 };
-//             }
-//             return item;
-//         }),
-//     };
-// case "REMOVE_FROM _ADDITONAL_FEATURES":
-//     return {
-//         ...state,
-//         additionalFeatures: state.additionalFeatures.filter(
-//             (additionalFeatures) => {
-//                 return !additionalFeatures.added;
-//             }
-//         ),
-//     };
-// case "ADD_TO_FEATURES":
-//     return {
-//         ...state.features,
-//         features: state.additionalFeatures.filter((feature) => {
-//             return feature.added;
-//         }),
-//     };
